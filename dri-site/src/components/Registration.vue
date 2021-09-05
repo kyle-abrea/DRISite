@@ -4,15 +4,16 @@
             <h1>Welcome to DRI! Get Started! Create an account here!</h1>
             <div id='formContainer'>
                 
-                <form @submit='validateSignup' novalidate="true">
+                <form  @submit="validateSignup"  novalidate='true'>
 
-                    <div id='fieldContainer' v-if='signupForm.errors.length'>
-                        <p>
+                    <div id='errorContainer' >
+                        <p v-if='signupForm.errors.length'>
                             <b>Please correct the following error(s):</b> 
-                            <!-- <ul>   
-                                <li v-for="error in signupForm.errors">{{ error }}</li>
-                            </ul> -->
-                        </p>
+
+                            <ul>   
+                                <li v-for="error in signupForm.errors" v-bind:key="error.id">{{ error }}</li>
+                            </ul>
+                        </p>    
                     </div>
 
                     <div id='fieldContainer'>
@@ -47,11 +48,11 @@
 
                     <div id='fieldContainer'>
                         <label for="password">Confirm Password: </label>
-                        <input v-model.trim="signupForm.confirmPassword" type="password" placeholder="" id="password" />
+                        <input v-model.trim="signupForm.confirmPassword" type="password" placeholder="" id="confirmPassword" />
                     </div>
 
                     <div id='fieldContainer'>
-                        <button @click="signup" class="button">Sign Up</button>
+                        <button @click="validateSignup" class="button">Sign Up</button>
                     </div>
 
                 </form>
@@ -65,46 +66,80 @@
 
 <script>
 export default {
+    e1: '#app',
+
     data() {
         return {
             signupForm: {
                 errors: [],
-                acct_name: '',
-                email: '',
-                first: '',
-                last: '',
-                phone: '',
-                password: '',
-                confirmPassword: ''
+                acct_name: null,
+                email: null,
+                first: null,
+                last: null,
+                phone: null,
+                password: null,
+                confirmPassword: null
             }
         }
     },
 
     methods: {
 
-        validateSignup:function() {
-            this.errors = [];
-            if(!this.signupForm.acct_name)
-                this.errors.push("Account name required");
+        validateSignup:function(e) {
+            this.signupForm.errors = [];
+            if(!this.signupForm.acct_name) {
+                this.signupForm.errors.push("*Account name required");
+                // window.alert("*Account name required");
+            }
 
-            if(!this.signupForm.email)
-                this.errors.push("Email required");
+            if(!this.signupForm.email) {
+                this.signupForm.errors.push("*Email required");
+                // window.alert("*Email required");
+            }
+            else if(!this.validateEmail(this.signupForm.email)) {
+                this.signupForm.errors.push('Valid email required.');
+            }
 
-            if(!this.signupForm.first)
-                this.errors.push("First name required");
+            if(!this.signupForm.first) {
+                this.signupForm.errors.push("*First name required");
+                // window.alert("*First name required");
+            }
 
-            if(!this.signupForm.last)
-                this.errors.push("Last name required");
+            if(!this.signupForm.last) {
+                this.signupForm.errors.push("*Last name required");
+                // window.alert("*Last name required");
+            }
 
-            if(!this.signupForm.phone)
-                this.errors.push("Phone number required");
+            if(!this.signupForm.phone) {
+                this.signupForm.errors.push("*Phone number required");
+                // window.alert("*Phone number required");
+            }
 
-            if(!this.signupForm.password)
-                this.errors.push("Password required");
+            if(!this.signupForm.password) {
+                this.signupForm.errors.push("*Password required");
+                // window.alert("*Password required");
+            }
 
-            if(!this.signupForm.confirmPassword)
-                this.errors.push("You must confirm your password");
-              
+            if(!this.signupForm.confirmPassword) {
+                this.signupForm.errors.push("*You must confirm your password");
+                // window.alert("*You must confirm your password");
+            }
+            
+            // window.alert(this.signupForm.errors.length);
+
+            // if (!this.errors.length) {
+            //     return true;
+            // }
+            
+            // window.alert(this.signupForm.errors[0]);
+            e.preventDefault()      
+        },
+
+        // validateAccName
+
+        validateEmail:function(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
         }
     }
 }
