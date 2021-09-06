@@ -31,12 +31,12 @@
                     
                     <div id='fieldContainer'>
                         <label for="first">First Name: </label>
-                        <input v-model.trim="signupForm.first" type="text" placeholder="" id="first" />
+                        <input v-model.trim="signupForm.first" type="text" placeholder="" id="first" style="text-transform:uppercase" />
                     </div>
 
                     <div id='fieldContainer'>
                         <label for="last">Last Name: </label>
-                        <input v-model.trim="signupForm.last" type="text" placeholder="" id="last" />
+                        <input v-model.trim="signupForm.last" type="text" placeholder="" id="last" style="text-transform:uppercase" />
                     </div>
 
                     <div id='fieldContainer'>
@@ -91,66 +91,72 @@ export default {
         validateSignup:function(e) {
             this.signupForm.errors = [];
 
+            // account name 
             if(!this.signupForm.acct_name) {
-                this.signupForm.errors.push("*Account name required");
+                this.signupForm.errors.push("*Account name required.");
                 // window.alert("*Account name required");
             }
             else if (!this.validateAcctName(this.signupForm.acct_name)) {
                 this.signupForm.errors.push('*Account name must be at least 5 characters in length.');
             }
 
+            //email
             if(!this.signupForm.email) {
-                this.signupForm.errors.push("*Email required");
+                this.signupForm.errors.push("*Email required.");
                 // window.alert("*Email required");
             }
             else if(!this.validateEmail(this.signupForm.email)) {
                 this.signupForm.errors.push('*Valid email required.');
             }
 
+            // first name 
             if(!this.signupForm.first) {
-                this.signupForm.errors.push("*First name required");
+                this.signupForm.errors.push("*First name required.");
                 // window.alert("*First name required");
             }
 
+            // last name
             if(!this.signupForm.last) {
-                this.signupForm.errors.push("*Last name required");
+                this.signupForm.errors.push("*Last name required.");
                 // window.alert("*Last name required");
             }
 
+            //phone
             if(!this.signupForm.phone) {
-                this.signupForm.errors.push("*Phone number required");
+                this.signupForm.errors.push("*Phone number required.");
                 // window.alert("*Phone number required");
             }
             else if(!this.validatePhone(this.signupForm.phone)) {
-                this.signupForm.errors.push("*Invalid phone number: Must be of form XXX-XXX-XXXX");
+                this.signupForm.errors.push("*Invalid phone number: Must be of form XXX-XXX-XXXX.");
             }
 
-            if(!this.signupForm.password) {
-                this.signupForm.errors.push("*Password required");
-                // window.alert("*Password required");
+            //password
+            //first check if either or both fields weren't filled in
+            if(!this.signupForm.password || !this.signupForm.confirmPassword) {
+                if(!this.signupForm.password) {
+                    this.signupForm.errors.push("*Password required.");
+                    // window.alert("*Password required");
+                }
+                if(!this.signupForm.confirmPassword) {
+                    this.signupForm.errors.push("*You must confirm your password.");
+                    // window.alert("*You must confirm your password");
+                }
             }
-            if(!this.signupForm.confirmPassword) {
-                this.signupForm.errors.push("*You must confirm your password");
-                // window.alert("*You must confirm your password");
-            }
-            if(this.signupForm.password && this.signupForm.confirmPassword && 
-              !this.equalPassword(this.signupForm.password, this.signupForm.confirmPassword)) {
-                this.signupForm.errors.push("*Passwords do not match");
+            // if both were filled in check if they match. if they do, check if they follow password rules   
+            else if(this.signupForm.password && this.signupForm.confirmPassword) {
+                if (!this.equalPassword(this.signupForm.password, this.signupForm.confirmPassword)) {
+                    this.signupForm.errors.push("*Passwords do not match.");
+                }
+                else if(!this.validatePassword(this.signupForm.password)) {
+                    this.signupForm.errors.push("*Password must contain at least 12 characters, at least 1 number, and at least 1 letter.");
+                }
             }
 
-            // if p or cp aren't input
-            //     if p isn't inputted
-            //         error p
-            //     if cp isn't input
-            //         error p
-            // else if (both were input)
-            //     if p != cp
-            //         error p != cp
-            //     else p == cp
-                    // check character rules 
-
+            //TESTING:
             // window.alert(this.signupForm.errors.length);s
             // window.alert(this.signupForm.errors[0]);
+            // window.alert(this.signupForm.first);
+            // window.alert(this.signupForm.last);
             e.preventDefault()      
         },
 
@@ -162,8 +168,8 @@ export default {
         },
 
         validateEmail:function(email) {
-            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email);
+            var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return regex.test(email);
         },
 
         validatePhone:function(phone) {
@@ -173,6 +179,11 @@ export default {
 
         equalPassword:function(pass1, pass2) {
             return pass1 === pass2;
+        },
+
+        validatePassword(pass) {
+            var regex= /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,}$/;
+            return regex.test(pass);
         }
 
     }
