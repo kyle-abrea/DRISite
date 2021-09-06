@@ -1,10 +1,17 @@
+* {
+    margin: 0;
+    // padding: 0;
+    // border: 0;
+    // outline: 0;
+    // font-size: 100%;
+    // vertical-align: baseline;
+    // background: transparent;
+}
 .registration {
-    #header {
 
-    }
-
-    #body {
-        width: 500px;
+    body {
+        width: 800px;
+        height: 100%;
         margin: auto;
         border: 5px green solid;
 
@@ -12,24 +19,23 @@
 
     #formContainer {
         label {
+            font-size: 0.8  em;
             display: block;
-            margin: auto;
+            // margin: auto;
         }
         input {
+            width: 450px;
+            height: 25px;
             display: block;
             margin-bottom: 100px;
             margin: auto;
             border-radius: 5px;
         }
-    }
 
-    #fieldContainer {
-        margin-bottom: 10px;
-        border: 5px indigo solid; 
+        border: 5px cyan solid; 
     }
 
     #errorContainer {
-
         ul {
             list-style-type: none;
             margin: auto;
@@ -38,15 +44,24 @@
         color: red;
         margin-bottom: 10px;
         border: 5px #847847 solid; 
+    }   
+
+    #fieldContainer {
+        margin-bottom: 10px;
+        border: 5px indigo solid; 
     }
+
+    
 
     #footer {
 
     }
     
-    width: 98%;
+    width: 90%;
+    min-height: 100%;
     margin: auto;
-    border: 5px red solid;
+    border: 5px blue solid;
+    background-color: lavender;
 
 }
 
