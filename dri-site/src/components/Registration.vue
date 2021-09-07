@@ -7,14 +7,14 @@
             <h1>Welcome to WRCC! Create an account here!</h1>
             <div id='formContainer'>
                 
-                <form  @submit="validateSignup"  novalidate='true'>
+                <form  @submit="register"  novalidate='true'>
 
                     <div id='errorContainer' >
-                        <p v-if='signupForm.errors.length'>
+                        <p v-if='errorHandler.errors.length'>
                             <b>Please correct the following error(s):</b> 
 
                             <ul>   
-                                <li v-for="error in signupForm.errors" v-bind:key="error.id">{{ error }}</li>
+                                <li v-for="error in errorHandler.errors" v-bind:key="error.id">{{ error }}</li>
                             </ul>
                         </p>    
                     </div>
@@ -46,16 +46,16 @@
 
                     <div id='fieldContainer'>
                         <label for="password">Password</label>
-                        <input v-model.trim="signupForm.password" type="password" placeholder="12 or more characters, 1 or more numbers, 1 or more special characters" id="password" />
+                        <input v-model.trim="signupForm.passwd" type="password" placeholder="12 or more characters, 1 or more numbers, 1 or more special characters" id="password" />
                     </div>
 
                     <div id='fieldContainer'>
                         <label for="password">Confirm Password: </label>
-                        <input v-model.trim="signupForm.confirmPassword" type="password" placeholder="" id="confirmPassword" />
+                        <input v-model.trim="errorHandler.confirmPassword" type="password" placeholder="" id="confirmPassword" />
                     </div>
 
                     <div id='fieldContainer'>
-                        <button @click="validateSignup" class="button">Sign Up</button>
+                        <button @click="register" class="button">Sign Up</button>
                     </div>
 
                 </form>
@@ -68,96 +68,136 @@
 </template>
 
 <script>
+
+import axios from 'axios'
+// import VueAxios from 'vue-axios'
+
 export default {
-    e1: '#app',
+    // e1: '#app',
 
     data() {
         return {
-            signupForm: {
+            
+            errorHandler: {
                 errors: [],
+                confirmPassword: null
+            }, 
+
+            signupForm: {
+                session_id: "",
+                svc: "acct",
+                subsvc: "acct_create",
                 acct_name: null,
                 email: null,
                 first: null,
                 last: null,
                 phone: null,
-                password: null,
-                confirmPassword: null
+                passwd: null,
+                //test password to ctrl+c & ctrl+p: 4$qwertyuiop
             }
         }
     },
 
     methods: {
 
+        register:function(e) {
+            window.alert("time to register");
+            if(this.validateSignup(e)) {
+                window.alert("success");
+                axios.post("https://wrcc.dri.edu/pass", this.signupForm, {
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                            }).then((result) => { 
+                    console.warn(result)
+                })
+                .catch(error => {
+                    // element.parentElement.innerHTML = `Error: ${error.message}`;
+                    console.error('There was an error!', error);
+                });
+            }
+            else {
+                window.alert("fail");
+            }
+            e.preventDefault();
+        },
+
         validateSignup:function(e) {
-            this.signupForm.errors = [];
+            this.errorHandler.errors = [];
 
             // account name 
             if(!this.signupForm.acct_name) {
-                this.signupForm.errors.push("*Account name required.");
+                this.errorHandler.errors.push("*Account name required.");
                 // window.alert("*Account name required");
             }
             else if (!this.validateAcctName(this.signupForm.acct_name)) {
-                this.signupForm.errors.push('*Account name must be at least 5 characters in length.');
+                this.errorHandler.errors.push('*Account name must be at least 5 characters in length.');
             }
 
             //email
             if(!this.signupForm.email) {
-                this.signupForm.errors.push("*Email required.");
+                this.errorHandler.errors.push("*Email required.");
                 // window.alert("*Email required");
             }
             else if(!this.validateEmail(this.signupForm.email)) {
-                this.signupForm.errors.push('*Valid email required.');
+                this.errorHandler.errors.push('*Valid email required.');
             }
 
             // first name 
             if(!this.signupForm.first) {
-                this.signupForm.errors.push("*First name required.");
+                this.errorHandler.errors.push("*First name required.");
                 // window.alert("*First name required");
             }
 
             // last name
             if(!this.signupForm.last) {
-                this.signupForm.errors.push("*Last name required.");
+                this.errorHandler.errors.push("*Last name required.");
                 // window.alert("*Last name required");
             }
 
             //phone
             if(!this.signupForm.phone) {
-                this.signupForm.errors.push("*Phone number required.");
+                this.errorHandler.errors.push("*Phone number required.");
                 // window.alert("*Phone number required");
             }
             else if(!this.validatePhone(this.signupForm.phone)) {
-                this.signupForm.errors.push("*Invalid phone number: Must be of form XXX-XXX-XXXX.");
+                this.errorHandler.errors.push("*Invalid phone number: Must be of form XXX-XXX-XXXX.");
             }
 
             //password
             //first check if either or both fields weren't filled in
-            if(!this.signupForm.password || !this.signupForm.confirmPassword) {
-                if(!this.signupForm.password) {
-                    this.signupForm.errors.push("*Password required.");
+            if(!this.signupForm.passwd || !this.errorHandler.confirmPassword) {
+                if(!this.signupForm.passwd) {
+                    this.errorHandler.errors.push("*Password required.");
                     // window.alert("*Password required");
                 }
-                if(!this.signupForm.confirmPassword) {
-                    this.signupForm.errors.push("*You must confirm your password.");
+                if(!this.errorHandler.confirmPassword) {
+                    this.errorHandler.errors.push("*You must confirm your password.");
                     // window.alert("*You must confirm your password");
                 }
             }
             // if both were filled in check if they match. if they do, check if they follow password rules   
-            else if(this.signupForm.password && this.signupForm.confirmPassword) {
-                if (!this.equalPassword(this.signupForm.password, this.signupForm.confirmPassword)) {
-                    this.signupForm.errors.push("*Passwords do not match.");
+            else if(this.signupForm.passwd && this.errorHandler.confirmPassword) {
+                if (!this.equalPassword(this.signupForm.passwd, this.errorHandler.confirmPassword)) {
+                    this.errorHandler.errors.push("*Passwords do not match.");
                 }
-                else if(!this.validatePassword(this.signupForm.password)) {
-                    this.signupForm.errors.push("*Password must contain at least 12 characters, at least 1 number, and at least 1 letter.");
+                else if(!this.validatePassword(this.signupForm.passwd)) {
+                    this.errorHandler.errors.push("*Password must contain at least 12 characters, at least 1 number, and at least 1 letter.");
                 }
             }
 
             //TESTING:
-            // window.alert(this.signupForm.errors.length);s
-            // window.alert(this.signupForm.errors[0]);
+            // window.alert(this.errorHandler.errors.length);s
+            // window.alert(this.errorHandler.errors[0]);
+            
+            window.alert(this.signupForm.acct_name);
             // window.alert(this.signupForm.first);
             // window.alert(this.signupForm.last);
             e.preventDefault()      
+
+
+            if(this.errorHandler.errors.length) {
+                return false;
+            }
+            return true;
         },
 
         validateAcctName:function(acct_name) {
@@ -181,10 +221,12 @@ export default {
             return pass1 === pass2;
         },
 
-        validatePassword(pass) {
+        validatePassword:function(pass) {
             var regex= /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,}$/;
             return regex.test(pass);
-        }
+        },
+
+     
 
     }
 }
