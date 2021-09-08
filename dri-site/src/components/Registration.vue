@@ -1,8 +1,14 @@
 <template>
     <div class='registration'>
-        <div id=header>
 
-        </div>
+        <!-- <transition name="fade">
+            <div v-if="performingRequest" class="loading">
+                <p>Loading...</p>
+            </div>
+        </transition> -->
+        <!-- <div id=header>
+
+        </div> -->
         <body>
             <h1>Welcome to WRCC! Create an account here!</h1>
             <div id='formContainer'>
@@ -94,12 +100,14 @@ export default {
                 phone: null,
                 passwd: null,
                 //test password to ctrl+c & ctrl+p: 4$qwertyuiop
-            }
+            },
+
+            // performingRequest: false;
+
         }
     },
 
     methods: {
-
         register:function(e) {
             window.alert("time to register");
             if(this.validateSignup(e)) {
@@ -187,8 +195,7 @@ export default {
             //TESTING:
             // window.alert(this.errorHandler.errors.length);s
             // window.alert(this.errorHandler.errors[0]);
-            
-            window.alert(this.signupForm.acct_name);
+            // window.alert(this.signupForm.acct_name);
             // window.alert(this.signupForm.first);
             // window.alert(this.signupForm.last);
             e.preventDefault()      
