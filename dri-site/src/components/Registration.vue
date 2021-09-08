@@ -1,14 +1,13 @@
 <template>
     <div class='registration'>
 
-        <!-- <transition name="fade">
-            <div v-if="performingRequest" class="loading">
-                <p>Loading...</p>
-            </div>
-        </transition> -->
-        <!-- <div id=header>
-
-        </div> -->
+        <!-- TODO:
+        - mockups
+        - make UI look like a actual webpage
+            - add header, footer
+            - reformat registration box
+        - UI response if user is successful in signing in -->
+        
         <body>
             <h1>Welcome to WRCC! Create an account here!</h1>
             <div id='formContainer'>
@@ -109,9 +108,9 @@ export default {
 
     methods: {
         register:function(e) {
-            window.alert("time to register");
+            // window.alert("time to register");
             if(this.validateSignup(e)) {
-                window.alert("success");
+                // window.alert("success");
                 axios.post("https://wrcc.dri.edu/pass", this.signupForm, {
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                             }).then((result) => { 
@@ -122,9 +121,9 @@ export default {
                     console.error('There was an error!', error);
                 });
             }
-            else {
-                window.alert("fail");
-            }
+            // else {
+            //     window.alert("fail");
+            // }
             e.preventDefault();
         },
 
