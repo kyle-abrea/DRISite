@@ -11,8 +11,7 @@ Go into the terminal and type:
 ```
 npx @vue/cli create dri-site
 ```
-The terminal will now ask you which version of Vue you would like: Vue 2 or Vue3. <br />
-For this assessment, I chose Vue 2. 
+The terminal will now ask you which version of Vue you would like: Vue 2 or Vue3. <br />For this assessment, I chose Vue 2. 
 Note: If you have Vue installed already,
 
 # Running the web page for the assessment:
