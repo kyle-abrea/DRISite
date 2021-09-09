@@ -8,7 +8,7 @@
                 <!-- registration form starts here -->
                 <form  @submit="register"  method='post' novalidate='true'>
 
-                    <!-- displaying registration errors starts here-->
+                    <!-- displaying registration errors starts here -->
                     <div id='errorContainer' >
                         <p v-if='errorHandler.errors.length'>
                             <b>Please correct the following error(s):</b> 
@@ -18,40 +18,40 @@
                             </ul>
                         </p>    
                     </div>
-                    <!-- displaying registration errors ends here-->
+                    <!-- displaying registration errors ends here -->
 
                     <div id='fieldContainer'>
-                            <label for="acct_name">Account Name: </label>
+                            <label for="acct_name">Account Name:*</label>
                             <input v-model.trim="signupForm.acct_name" type="text" placeholder="Must be a minimum of 5 characters" id="acct_name" size="10"/>
                     </div>
 
                     <div id='fieldContainer'>
-                        <label for="email">Email: </label>
+                        <label for="email">Email:* </label>
                         <input v-model.trim="signupForm.email" type="text" placeholder="example@example.com" id="email" />
                     </div>
                     
                     <div id='fieldContainer'>
-                        <label for="first">First Name: </label>
+                        <label for="first">First Name:*</label>
                         <input v-model.trim="signupForm.first" type="text" placeholder="First" id="first"/>
                     </div>
 
                     <div id='fieldContainer'>
-                        <label for="last">Last Name: </label>
+                        <label for="last">Last Name:*</label>
                         <input v-model.trim="signupForm.last" type="text" placeholder="Last" id="last"/>
                     </div>
 
                     <div id='fieldContainer'>
-                        <label for="phone">Phone Number: </label>
+                        <label for="phone">Phone Number:*</label>
                         <input v-model.trim="signupForm.phone" type="text" placeholder="XXX-XXX-XXXX (Must contain dashes)" id="phone" />
                     </div>
 
                     <div id='fieldContainer'>
-                        <label for="password">Password: </label>
+                        <label for="password">Password:*</label>
                         <input v-model.trim="signupForm.passwd" type="password" placeholder="At least 12 characters, must consist of letters, numbers, or special characters" id="password" />
                     </div>
 
                     <div id='fieldContainer'>
-                        <label for="password">Confirm Password: </label>
+                        <label for="password">Confirm Password:*</label>
                         <input v-model.trim="errorHandler.confirmPassword" type="password" placeholder="At least 12 characters, must consist of letters, numbers, or special characters" id="confirmPassword" />
                     </div>
 
@@ -66,24 +66,32 @@
             <!-- user has successfully registered and made an account, so un-render the form container and render a success response UI -->
             <div id='successContainer' v-if='requestHandler.registered'>
                 <h1>Successfully created account!</h1>
-                <!-- dummy button to show demonstrate that user should log in with their new account right after successful registration -->
+                <!-- dummy button to demonstrate that user should log in with their new account right after successful registration -->
                 <div id='fieldContainer'>
                     <button class="button">Click here to log in!</button> 
                 </div>
             </div>
         </body>
+        <!-- loading transition -->
+        <transition name="fade">
+            <div v-if="loading" class="loading">
+                <p>Loading...</p>
+            </div>
+        </transition>
     </div>
     
 </template>
 
 <script>
 
-//for post requests
+// for post requests
 import axios from 'axios'
 
 export default {
     data() {
         return {          
+            loading: false,
+
             requestHandler: {
                 url: "https://wrcc.dri.edu/pass",
                 registered: false
@@ -109,15 +117,16 @@ export default {
     },
 
     methods: {
-        //function to register a user
+        // function to register a user
         register:function(e) {
+            this.loading = true;
+            
             if(this.validateSignup(e)) {
-                
                 axios.post(this.requestHandler.url, this.signupForm, {
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                             })
                             .then((result) => { 
-                                
+                                this.loading = false;
                                 if(result.data.msg === "account name already used") {
                                     this.errorHandler.errors.push("*This account name is already registered with another account.");
                                 }
@@ -134,10 +143,14 @@ export default {
                                 console.log(result);
                             })
                 .catch(error => {
+                    this.loading = true;
                     console.error('There was an error!', error);
                     window.alert("error");
                 });
                 
+            }
+            else {
+                this.loading = false;
             }
             e.preventDefault();
         },
@@ -154,7 +167,7 @@ export default {
                 this.errorHandler.errors.push('*Account name must be at least 5 characters in length.');
             }
 
-            //email
+            // email
             if(!this.signupForm.email) {
                 this.errorHandler.errors.push("*Email required.");
             }
@@ -173,7 +186,7 @@ export default {
 
             }
 
-            //phone
+            // phone
             if(!this.signupForm.phone) {
                 this.errorHandler.errors.push("*Phone number required.");
             }
@@ -181,8 +194,8 @@ export default {
                 this.errorHandler.errors.push("*Invalid phone number: Must be of form XXX-XXX-XXXX.");
             }
 
-            //password
-            //first check if either or both fields weren't filled in
+            // password
+            // first check if either or both fields weren't filled in
             if(!this.signupForm.passwd || !this.errorHandler.confirmPassword) {
                 if(!this.signupForm.passwd) {
                     this.errorHandler.errors.push("*Password required.");
@@ -203,7 +216,7 @@ export default {
             }
             e.preventDefault()      
 
-            //error handler for validation
+            // error handler for validation
             if(this.errorHandler.errors.length) {
                 return false;
             }
@@ -229,8 +242,8 @@ export default {
         },
 
         validatePassword:function(pass) {
-            var regex= /^[a-zA-Z0-9!@#$&()`.+,/"-]{12}$/;
-            return regex.test(pass);
+            var regex= /^[a-zA-Z0-9!@#$&()`.+,/"-]{12,}$/;
+            return regex.test(pass);  
         },
 
         equalPassword:function(pass1, pass2) {
