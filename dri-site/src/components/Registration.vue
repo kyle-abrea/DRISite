@@ -1,19 +1,10 @@
 <template>
     <div class='registration'>
-
-        <!-- TODO:
-        - mockups
-        - make UI look like a actual webpage
-            - add header, footer
-            - reformat registration box
-        - UI response if user is successful in signing in -->
-        
         <body>
             <h1>Welcome to WRCC! Create an account here!</h1>
             <div id='formContainer'>
                 
                 <form  @submit="register"  novalidate='true'>
-
                     <div id='errorContainer' >
                         <p v-if='errorHandler.errors.length'>
                             <b>Please correct the following error(s):</b> 
@@ -25,7 +16,7 @@
                     </div>
 
                     <div id='fieldContainer'>
-                            <label for="acct_name">Account Name</label>
+                            <label for="acct_name">Account Name: </label>
                             <input v-model.trim="signupForm.acct_name" type="text" placeholder="Must be a minimum of 5 characters" id="acct_name" size="10"/>
                     </div>
 
@@ -50,7 +41,7 @@
                     </div>
 
                     <div id='fieldContainer'>
-                        <label for="password">Password</label>
+                        <label for="password">Password: </label>
                         <input v-model.trim="signupForm.passwd" type="password" placeholder="12 or more characters, 1 or more numbers, 1 or more special characters" id="password" />
                     </div>
 
@@ -65,7 +56,6 @@
 
                 </form>
             
-
             </div>
         </body>
     </div>
@@ -75,14 +65,13 @@
 <script>
 
 import axios from 'axios'
-// import VueAxios from 'vue-axios'
 
 export default {
-    // e1: '#app',
-
     data() {
-        return {
-            
+        return {          
+            postHandler: {
+                url: "https://wrcc.dri.edu/pass"
+            },
             errorHandler: {
                 errors: [],
                 confirmPassword: null
@@ -100,26 +89,46 @@ export default {
                 passwd: null,
                 //test password to ctrl+c & ctrl+p: 4$qwertyuiop
             },
-
-            // performingRequest: false;
-
         }
     },
 
     methods: {
         register:function(e) {
             // window.alert("time to register");
+
+            // if vsu:
+            //     if acct_name or email is in db:
+            //         error
+            // else:
+            //     no error
+            
+            
+
             if(this.validateSignup(e)) {
                 // window.alert("success");
-                axios.post("https://wrcc.dri.edu/pass", this.signupForm, {
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                            }).then((result) => { 
-                    console.warn(result)
-                })
-                .catch(error => {
-                    // element.parentElement.innerHTML = `Error: ${error.message}`;
-                    console.error('There was an error!', error);
-                });
+                axios.post(this.postHandler.url, this.signupForm, {
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                            })
+                            .then((result) => { 
+                                if(result.data.msg === "account name already used") {
+                                    this.errorHandler.errors.push("*This account name is already registered with another account");
+                                }
+                                else if(result.data.msg === "e-mail address already used") {
+                                    this.errorHandler.errors.push("*This email address is already registered with another account");
+                                }
+                                else if(result.data.msg === "account name already used; e-mail address already used"){
+                                    this.errorHandler.errors.push("*This account name is already registered with another account");
+                                    this.errorHandler.errors.push("*This email address is already registered with another account");
+                                }
+                                console.log(result);
+                            })
+                // .catch(error => {
+                //     // element.parentElement.innerHTML = `Error: ${error.message}`;
+
+                //     console.error('There was an error!', error);
+                //     window.alert("error");
+                // });
+                
             }
             // else {
             //     window.alert("fail");
@@ -188,6 +197,7 @@ export default {
                 }
                 else if(!this.validatePassword(this.signupForm.passwd)) {
                     this.errorHandler.errors.push("*Password must contain at least 12 characters, at least 1 number, and at least 1 letter.");
+                    
                 }
             }
 
