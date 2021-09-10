@@ -23,7 +23,7 @@ npm run serve
 If all goes well, the terminal will prompt you with two links. Choose the one that says Local, and then copy that link into your browser. This should render the webpage for assessment.
 
 # Error handling:
-When your first try to run the project, your terminal might say something like:
+When you first try to run the project, your terminal might say something like:
 ```
 'vue-cli-service' is not recognized as an interntal or external command.... etc....
 ```
