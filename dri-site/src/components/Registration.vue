@@ -119,6 +119,7 @@ export default {
     methods: {
         // function to register a user
         register:function(e) {
+            window.alert("hell0 world");
             this.loading = true;
             
             if(this.validateSignup(e)) {
@@ -143,7 +144,7 @@ export default {
                                 console.log(result);
                             })
                 .catch(error => {
-                    this.loading = true;
+                    this.loading = false;
                     console.error('There was an error!', error);
                     window.alert("error");
                 });
