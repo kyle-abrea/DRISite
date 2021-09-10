@@ -183,7 +183,6 @@ export default {
             // last name
             if(!this.signupForm.last) {
                 this.errorHandler.errors.push("*Last name required.");
-
             }
 
             // phone
