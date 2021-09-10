@@ -119,7 +119,6 @@ export default {
     methods: {
         // function to register a user
         register:function(e) {
-            window.alert("hell0 world");
             this.loading = true;
             
             if(this.validateSignup(e)) {
